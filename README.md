@@ -132,7 +132,7 @@ Optional [MNE EEG+MEG demonstration](docs/open_data.md) uses sample data acquire
 
 ## Validation status
 
-The revised source passes **49 local tests**; three synthetic Python examples and three synthetic Jupyter notebooks executed, and four PNG plus four SVG scientific figures regenerated successfully. These are local software checks, **not independent biological validation**. The real MNE sample EEG+MEG recording was not downloaded or analyzed. Hosted GitHub Actions and native Windows installation are unverified until actually run. See [validation report](VALIDATION_REPORT.md).
+The revised source passes **49 local tests**; three synthetic Python examples and three synthetic Jupyter notebooks executed, and four PNG plus four SVG scientific figures regenerated successfully. These are local software checks, **not independent biological validation**. The real MNE sample EEG+MEG recording was not downloaded or analyzed. GitHub-hosted package builds and a cross-platform test matrix have passed on published code. A clean installation on an independent Windows laptop has not been verified. See [validation report](VALIDATION_REPORT.md).
 
 ## Repository map
 
