@@ -1,0 +1,3 @@
+# Representational Similarity Analysis
+
+For each matched experimental unit `i`, compute distances to every other matched unit `j` within modality A and separately within B. Compare the upper triangles of the two dissimilarity matrices with Spearman correlation. NMA supports `metric='euclidean'` and `metric='correlation'`. The RSA score describes similarity in relational geometry, **not** shared raw feature values or identical biological mechanisms. Correlation distance is undefined for constant observations. Because RDM entries share observations, do not treat the upper-triangle entries as independent samples. Permutations must shuffle the correspondence of whole units, not individual RDM cells.

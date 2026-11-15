@@ -1,0 +1,3 @@
+# Reproducibility
+
+All generated figures in `assets/` come from `reproduce/make_figures.py`, are labeled synthetic, and are exported as PNG and SVG. The script sets deterministic pseudorandom seeds. Run the script after installing the package. Results may vary slightly with BLAS/LAPACK libraries or dependency versions; capture `pip freeze` if exact computational environment provenance is required. No external dataset is bundled. The simulation has known generative shared/private latent factors, but measured sample estimates naturally vary by seed. The leakage illustration uses independent random modalities so inflated **training** CCA can be visually compared to honest test-fold estimation.

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this research software, cite the specific tagged release. No DOI or peer-reviewed validation is claimed."
+title: "Neuro Multimodal Alignment"
+type: software
+authors:
+  - family-names: "RK"
+    given-names: "Lathushan"
+version: 0.5.0
+date-released: 2026-11-15
+license: MIT

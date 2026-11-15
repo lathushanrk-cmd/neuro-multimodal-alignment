@@ -1,0 +1,3 @@
+# Canonical Correlation Analysis
+
+CCA chooses linear projections of A and B with high correlation. In-sample canonical correlations can be deceptively high when dimensionality is large relative to samples. NMA's `CrossValidatedCCA.fit_evaluate` fits standardization, optional PCA and CCA **only on training rows** and reports test-fold correlations. Specify groups to prevent rows from the same group appearing in train and test. A held-out correlation is not proof of common biological representation. Do not compare separately fitted CCA coordinate systems without an appropriate evaluation definition.
