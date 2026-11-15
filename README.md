@@ -107,6 +107,8 @@ The v0.5.0 validation record reports 49 local tests, 93% statement coverage, thr
 
 Known-answer simulations test whether the methods behave as expected under specified conditions. They cannot establish general validity for arbitrary neuroscience datasets. In particular, the validity of permutations depends on exchangeability, and temporal correspondence can be influenced by modality-specific sampling and hemodynamic responses. Further discussion is in [limitations](docs/limitations.md).
 
+For the reasoning behind the analysis design, see [implementation notes](docs/implementation_notes.md). The [demonstration walkthrough](docs/walkthrough.md) provides a short reproducible explanation of the core methods.
+
 ## Files and documentation
 
 | Path | Contents |
