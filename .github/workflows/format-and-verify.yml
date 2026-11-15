@@ -1,0 +1,36 @@
+name: One-time source formatting and verification
+on:
+  push:
+    paths:
+      - '.github/workflows/format-and-verify.yml'
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply safe Python formatting and lint fixes
+        run: |
+          python -m pip install ruff
+          ruff check src/ --select E4,E7,E9,F --fix || true
+          ruff format src/
+          ruff check src/ --select E4,E7,E9,F
+      - name: Confirm scientific tests still pass
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
+      - name: Commit verified formatting updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/
+          if ! git diff --cached --quiet; then
+            git commit -m "Format NMA source and resolve static analysis errors"
+            git push origin HEAD:main
+          fi
