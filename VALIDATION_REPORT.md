@@ -24,7 +24,7 @@
 ## Unverified
 
 - Optional real external MNE EEG+MEG dataset download, run-level analysis and biological results.
-- Native Windows installation and any hosted GitHub Actions checks until independently executed on GitHub.
+- Native Windows installation on an independent user's machine is not verified. Hosted GitHub Actions have run successfully for a prior published revision: package build, Windows/Ubuntu matrix tests, and source-formatting regression tests. Always check the latest [Actions](https://github.com/lathushanrk-cmd/neuro-multimodal-alignment/actions) status for the current commit.
 - Independent participant/session generalization, clinical diagnosis, and biological validation.
 - Reviewer confirmation of the scientific truth of supplied pairing IDs and any exchangeability assumptions.
 
