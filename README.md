@@ -1,84 +1,39 @@
-<div align="center">
+# Neuro Multimodal Alignment
 
-<img src="assets/hero_synthetic.png" alt="Neon blue and purple scientific figure showing synthetic modality embeddings, representational distances and a permutation null" width="100%" />
+**Comparing representational structure across neural measurement modalities**
 
-# NEURO MULTIMODAL ALIGNMENT
+Python 3.10+ · [MIT License](LICENSE) · Version 0.5.0  
+[Build status](https://github.com/lathushanrk-cmd/neuro-multimodal-alignment/actions) · [Installation](docs/getting_started.md) · [Methods](docs/index.md)
 
-### A Reproducible Toolkit for Comparing Shared Neural Representations Across Measurement Modalities
+![Synthetic representations from two modalities and their alignment against a null comparison](assets/hero_synthetic.png)
 
-**Python research toolkit · RSA · Cross-validated CCA · Procrustes · Temporal alignment**
+*Illustration from a synthetic benchmark, not participant EEG, MEG or fMRI recordings.*
 
-![Status](https://img.shields.io/badge/status-research%20prototype-7a65b7) ![Python](https://img.shields.io/badge/Python-3.10%2B-22bfd3) ![License](https://img.shields.io/badge/license-MIT-22bfd3) ![Results](https://img.shields.io/badge/figures-synthetic%20only-7a65b7)
+## Research question
 
-</div>
+EEG, MEG and fMRI offer different measurements of brain activity. Even where an experiment presents the same stimuli or compares the same conditions, the recorded signals have different spatial and temporal characteristics. Directly comparing their raw sensor values is often not meaningful.
 
-## The big idea
+This package examines a narrower question: **do two sets of measurements preserve similar relationships among the experimental items they represent?** It provides several ways to measure correspondence between feature matrices, along with checks intended to reduce spurious alignment and overfitting.
 
-Brain measurements can describe the same experiment in very different ways. EEG and MEG record rapid electrical or magnetic signals. fMRI tracks slower blood-oxygen-related changes. **How can we tell whether different measurements preserve similar relationships among stimuli or brain states?**
+The analyses require a defensible relationship between observations in the two datasets. Matching row counts are not enough.
 
-Neuro Multimodal Alignment helps researchers test those relationships **without pretending that different signals are identical**. It focuses on careful matching of observations, controlled statistical comparisons, and transparent validation.
+## Analysis methods
 
-> **Current status:** Installable research software prototype (`v0.5.0`). Figures below come from synthetic simulations, not participant recordings. No DOI, independent biological validation, or publication is claimed.
+**Representational similarity analysis (RSA).** Construct a dissimilarity matrix within each dataset, then compare the upper triangles of the matrices using Spearman correlation. RSA summarizes the geometry of relationships among observations; the basic score is descriptive.
 
-## Why comparing modalities matters
+**Canonical correlation analysis (CCA).** Learn linear combinations of features that covary across datasets. Scaling and optional dimension reduction are fitted on training data, and the canonical correlations are evaluated on held-out observations. High training correlation alone can be misleading.
 
-EEG and MEG capture fast electrical and magnetic fields, while fMRI measures slower blood-oxygen-related changes. Their raw values, units and timings are very different. The purpose here is to compare **relationships among explicitly matched experimental items**, not to claim that two signals are biologically identical.
+**Orthogonal Procrustes.** Fit a rotation or reflection that maps one coordinate representation toward another, then examine alignment error on held-out observations. Geometric agreement is not biological equivalence.
 
-## What it can do
+**Shared and modality-specific structure.** Estimate cross-modal predictability with a defined linear model. The results depend on that model and should not be interpreted as the uniquely measurable biological amount of shared information.
 
-| Method | Plain-English meaning | Main caution |
-|---|---|---|
-| **RSA** | Compare whether two modalities show similar patterns of relationships among the same experimental units | A similar pattern is not the same biological mechanism |
-| **CCA** | Find linear combinations of features that correlate across modalities | Report correlations on held-out data, not training data |
-| **Procrustes** | Find the best rotation/reflection to align two reduced representations | A small error does not prove biological identity |
-| **Temporal RSA** | Explore when representational similarity appears across a time series | A peak is not automatically a biological lag |
-| **Permutation tests** | Compare an observed score against correspondence-broken data | Only shuffle units that are exchangeable |
-| **Ground-truth simulation** | Create known shared, private and noise factors to test the methods | Simulated success is not real-data validation |
+**Temporal RSA.** Compare representational geometry across time samples, with permutation-based controls. Temporal peaks are measures of alignment under a chosen comparison, not proof of neural transmission or causal timing.
 
-## How the workflow fits together
+The [method notes](docs/index.md) explain prerequisites, common failure modes, and interpretation.
 
-```text
-Modality A features   +   Modality B features
-            |             |
-            +--- Match observations by ID ---+
-                         |
-                 Fit transformations
-                   TRAIN DATA ONLY
-                         |
-             RSA / CCA / Procrustes
-                         |
-              Held-out evaluation
-                         |
-           Permutation / uncertainty checks
-                         |
-             Reproducible visualizations
-```
+## Start with a synthetic experiment
 
-**Important:** paired observations, condition-paired summaries and unpaired datasets are different experimental situations. This toolkit requires a justified correspondence between rows. It does not silently assume two unrelated datasets are paired.
-
-## See the simulated experiments
-
-### Shared structure across synthetic modalities
-
-![Synthetic shared structure benchmark](assets/shared_structure.png)
-
-The generator creates truly shared latent factors plus separate modality-private factors and noise. This plot shows a simulation parameter sweep, **not a biological effect**. The shaded area is a seed range, not a confidence interval.
-
-### Temporal similarity and permutation controls
-
-![Synthetic temporal alignment](assets/temporal_alignment.png)
-
-The injected synthetic signal provides a known peak. Max-statistic permutations assess peaks across the displayed time points under the synthetic exchangeability assumptions.
-
-### Why training correlations can mislead
-
-![CCA high-dimensional in-sample versus held-out demonstration](assets/cca_leakage.png)
-
-Independent synthetic feature matrices may show spuriously impressive training CCA correlations. A held-out estimate provides a better assessment of generalization.
-
-## Install and try it
-
-Requires Python 3.10 or newer. Open the repository in a terminal or Windows PowerShell.
+From the root of the cloned repository:
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -86,84 +41,86 @@ python -m pytest -q
 python examples/01_ground_truth_simulation.py
 ```
 
-Run a short Python example:
+The example constructs feature matrices with known shared factors and noise. It then computes an RSA score and a permutation-based comparison.
 
 ```python
 from nma.simulation import generate_shared_private
 from nma.rsa import rsa_score
 from nma.statistics import rsa_permutation_test
 
-simulation = generate_shared_private(n_samples=100, random_state=42)
-aligned = simulation.aligned
+sim = generate_shared_private(
+    n_samples=160,
+    shared_strength=2.5,
+    noise=0.1,
+    random_state=42,
+)
+score = rsa_score(sim.aligned, metric="euclidean")
+test = rsa_permutation_test(
+    sim.aligned,
+    metric="euclidean",
+    n_permutations=199,
+    random_state=42,
+)
 
-score = rsa_score(aligned, metric="euclidean")
-result = rsa_permutation_test(aligned, metric="euclidean", n_permutations=199)
-print("Synthetic RSA:", round(score, 3))
-print("Permutation p-value:", result.pvalue)
+print("Synthetic RSA:", score)
+print("Permutation p-value:", test.pvalue)
 ```
 
-See [complete Windows/Linux steps](docs/getting_started.md). The public `nma` API is summarized in [API documentation](docs/api.md).
+The outcome is specific to this seeded simulation. It does not establish correspondence between recordings from real participants.
 
-## Make the scientific figures yourself
+For a Windows environment, [getting started](docs/getting_started.md) includes Python installation and virtual-environment instructions.
+
+## What the simulations test
+
+The repository includes four figures, generated by [`reproduce/make_figures.py`](reproduce/make_figures.py):
+
+| Figure | Question examined |
+| --- | --- |
+| [Shared structure](assets/shared_structure.png) | How does measured cross-modal correspondence change when a controlled shared factor is varied? |
+| [CCA and overfitting](assets/cca_leakage.png) | How different can training and held-out correlations be in high-dimensional data? |
+| [Temporal alignment](assets/temporal_alignment.png) | Can the analysis recover an injected temporal relationship under a specified null model? |
+| [Overview](assets/hero_synthetic.png) | How do two synthetic feature sets compare in representational geometry and against a permutation reference? |
+
+All four are **synthetic demonstrations**; the results are produced by code, not claimed to be measurements from a participant. Recreate them with:
 
 ```bash
 python reproduce/make_figures.py
 ```
 
-Every numerical image is regenerated from source code. PNG files appear in the GitHub README and SVG versions provide vector-quality graphics. **No data or outcome was manually invented.**
+## Pairing observations is essential
 
-## Understanding the results
+The analysis starts with two feature matrices, usually called `X` and `Y`. Their rows must refer to corresponding observations according to an explicitly declared pairing design. The toolkit supports observation-level, subject-level or condition-level matching and checks identifiers and metadata. It cannot independently establish whether the supplied identifiers are scientifically correct.
 
-**RSA:** A descriptive Spearman comparison of which experimental items appear similar or different across modalities. It is **not automatically cross-validated RSA**.
+Cross-validation needs the same care: if several observations belong to one participant or session, a trial-level random split may give misleading performance. Relevant routines support group-aware evaluation, but the researcher must define the groups and decide whether the resulting inference is appropriate.
 
-**CCA:** Correlations between learned combinations of features on held-out observations. High in-sample correlations can reflect overfitting, especially with too many features.
+Read [data alignment](docs/data_alignment.md) and [statistical assumptions](docs/statistics.md) before using the package for a study.
 
-**Procrustes:** The held-out difference after the best training-derived rotation/reflection of low-dimensional representations. Small error is not biological identity.
+## Real-data example: current status
 
-**Temporal RSA:** The time-dependent correspondence of representational relationships; the optional `blocks` argument restricts null permutations to declared exchangeable groups. An alignment peak is not a measured neural transmission delay.
+An [optional MNE EEG/MEG example](examples/04_mne_eeg_meg_demo.py) is provided as a starting point for public sample recordings. The packaged release does **not** report completed empirical results from that example; execution against downloaded recordings remains unverified.
 
-**Shared versus private:** Linear cross-modal predictability is a model-dependent estimate, not a direct measurement of unique biological shared information.
+The toolkit is not an EEG-to-fMRI converter, a clinical classifier or evidence that different measurement modalities encode identical neural processes.
 
-## Use your own neuroscience features
+## Software validation
 
-Create matrices `X` and `Y` where rows are **the same known experimental units** in the same order. Provide unique IDs and declare `pairing="observation"`, `"condition"`, or `"subject"`. The toolkit also offers an ID-aware reordering constructor. The researcher must verify that supplied IDs really refer to matching observations; the program cannot establish this biological truth. If data have no defensible correspondence, direct paired alignment is not justified.
+The v0.5.0 validation record reports 49 local tests, 93% statement coverage, three executed synthetic examples and three executed synthetic notebooks. The [GitHub Actions history](https://github.com/lathushanrk-cmd/neuro-multimodal-alignment/actions) provides the actual hosted results for package builds, lint and cross-platform tests. The [validation report](VALIDATION_REPORT.md) distinguishes software checks from biological evidence.
 
-Optional [MNE EEG+MEG demonstration](docs/open_data.md) uses sample data acquired outside this ZIP. It has **not** been run against downloaded real recordings in the packaged validation and is not presented as empirical evidence.
+Known-answer simulations test whether the methods behave as expected under specified conditions. They cannot establish general validity for arbitrary neuroscience datasets. In particular, the validity of permutations depends on exchangeability, and temporal correspondence can be influenced by modality-specific sampling and hemodynamic responses. Further discussion is in [limitations](docs/limitations.md).
 
-## Validation status
+## Files and documentation
 
-The revised source passes **49 local tests**; three synthetic Python examples and three synthetic Jupyter notebooks executed, and four PNG plus four SVG scientific figures regenerated successfully. These are local software checks, **not independent biological validation**. The real MNE sample EEG+MEG recording was not downloaded or analyzed. GitHub-hosted package builds and a cross-platform test matrix have passed on published code. A clean installation on an independent Windows laptop has not been verified. See [validation report](VALIDATION_REPORT.md).
-
-## Repository map
-
-| Folder | What you will find |
-|---|---|
-| `src/nma/` | Installable Python analysis package |
-| `tests/` | Known-answer and failure-condition checks |
-| `examples/` | Small runnable synthetic examples and optional MNE adapter |
-| `reproduce/` | Exact code generating every scientific graphic |
-| `assets/` | Actual generated PNG and SVG images |
-| `docs/` | Beginner explanations, scientific methods and original master guide |
-| `.github/workflows/` | Definitions for Windows/Linux testing and package builds |
-
-## Scientific transparency
-
-- Scaling, optional PCA and CCA are fitted on the **training fold only**.
-- RSA summarizes relational geometry and does not infer identical neural activity.
-- Permutation logic depends on exchangeability and sampling design.
-- Cross-modal prediction describes model-based predictability, not biologically unique information.
-- Temporal alignment does not by itself measure neural transmission delays or hemodynamic causality.
-- **Unit-test success does not constitute independent biological validation.**
-
-Run [local benchmarks](docs/performance.md). Read the [validation report](VALIDATION_REPORT.md), [statistical assumptions](docs/statistics.md), and [full limitations](docs/limitations.md).
+| Path | Contents |
+| --- | --- |
+| [`src/nma/`](src/nma/) | Analysis implementation |
+| [`tests/`](tests/) | Numerical, scientific-safeguard and error-condition tests |
+| [`examples/`](examples/) | Executable scripts and notebooks |
+| [`reproduce/`](reproduce/) | Synthetic figures and benchmarks |
+| [`docs/`](docs/) | Method descriptions and data requirements |
+| [`assets/`](assets/) | Generated PNG and SVG figures |
 
 ## Author
 
-**Lathushan RK**  
-Independent researcher
-
+**Lathushan RK** — Independent researcher  
 Research interests: computational neuroscience, neural dynamics, brain-state representation, neurophysiology and multimodal neural measurements.
 
-## Citation, contributions and license
-
-Software metadata: [`CITATION.cff`](CITATION.cff). Please cite the repository version used. See the scientific limitations and validation record above. Released under the [MIT License](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute and [CHANGELOG.md](CHANGELOG.md) for release notes.
+The software is available under the [MIT License](LICENSE). See [`CITATION.cff`](CITATION.cff) for citation information and [`CONTRIBUTING.md`](CONTRIBUTING.md) for contributions. Version 0.5.0 is an early research release; no DOI, peer-reviewed scientific finding, or independent biological validation is claimed.
