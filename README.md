@@ -120,6 +120,10 @@ For the reasoning behind the analysis design, see [implementation notes](docs/im
 | [`docs/`](docs/) | Method descriptions and data requirements |
 | [`assets/`](assets/) | Generated PNG and SVG figures |
 
+## Development note
+
+The research concept, scientific methods, testing, and documentation were developed by Lathushan RK. AI-assisted tools supported programming, troubleshooting, and improvements to the software implementation.
+
 ## Author
 
 **Lathushan RK** — Independent researcher  
