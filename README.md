@@ -160,8 +160,9 @@ Run [local benchmarks](docs/performance.md). Read the [validation report](VALIDA
 ## Author
 
 **Lathushan RK**  
-Department of Life Sciences, NSBM Green University, Sri Lanka  
-Biomedical Science undergraduate with research interests in computational neuroscience, neurophysiology, neural dynamics and multimodal measurement.
+Independent researcher
+
+Research interests: computational neuroscience, neural dynamics, brain-state representation, neurophysiology and multimodal neural measurements.
 
 ## Citation, contributions and license
 
