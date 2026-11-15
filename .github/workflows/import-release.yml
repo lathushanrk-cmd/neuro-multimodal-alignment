@@ -1,0 +1,54 @@
+name: Import prepared Project 2 release
+on:
+  push:
+    paths:
+      - '.nma_import/source_bundle.b64'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Extract exact source archive
+        run: |
+          python -m pip install brotli
+          python - <<'PY'
+          import base64, brotli, io, tarfile
+          from pathlib import Path
+          payload = Path('.nma_import/source_bundle.b64')
+          data = brotli.decompress(base64.b64decode(payload.read_bytes()))
+          with tarfile.open(fileobj=io.BytesIO(data), mode='r:') as tar:
+              for item in tar:
+                  name = Path(item.name)
+                  if name.is_absolute() or '..' in name.parts or item.issym() or item.islnk():
+                      raise ValueError(f'Unsafe archive entry: {item.name}')
+              tar.extractall('.', filter='data')
+          print('Imported prepared multimodal alignment files')
+          PY
+      - name: Install and test package
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
+          python -m compileall -q src tests reproduce examples
+      - name: Regenerate synthetic scientific images
+        env:
+          MPLBACKEND: Agg
+        run: python reproduce/make_figures.py
+      - name: Build Python wheel and source release
+        run: |
+          python -m pip install build
+          python -m build
+      - name: Publish complete source, figures and package
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish Project 2 v0.5.0 source, scientific figures and validation"
+            git push origin HEAD:main
+          fi
