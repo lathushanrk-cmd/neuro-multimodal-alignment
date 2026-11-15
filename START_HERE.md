@@ -1,16 +1,17 @@
-# START HERE — Neuro Multimodal Alignment
+# Getting started with Neuro Multimodal Alignment
 
-**This is Project 2, completely separate from Neural State Space Lab.** It studies correspondences between matched neural representations, rather than state perturbations and recovery.
+The main [README](README.md) explains the research question and links to each method. For correct use with your own measurements, read [data alignment](docs/data_alignment.md) before running a comparison.
 
-Read [README](README.md), [matching requirements](docs/data_alignment.md) and [validation](VALIDATION_REPORT.md).
+Install in a Python 3.10+ environment from the repository root:
 
 ```bash
 python -m pip install -e ".[dev]"
 python -m pytest -q
-python reproduce/make_figures.py
 python examples/01_ground_truth_simulation.py
 python examples/02_rsa_demo.py
 python examples/03_crossvalidated_cca.py
 ```
 
-All included scientific plots are simulated. Optional external sample EEG+MEG analysis is a separate unverified experiment, not an EEG-fMRI converter or a demonstrated real-data discovery.
+Generate the synthetic figures with `python reproduce/make_figures.py`.
+
+The [optional EEG/MEG example](examples/04_mne_eeg_meg_demo.py) requires external recordings and has not been verified as a complete empirical analysis. See [validation](VALIDATION_REPORT.md) for the checks actually performed.
