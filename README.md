@@ -1,13 +1,16 @@
-# Neuro Multimodal Alignment
+<p align="center">
+  <img src="assets/readme_banner.svg" alt="Original conceptual banner for Neuro Multimodal Alignment; not experimental data" width="100%" />
+</p>
 
-**Comparing representational structure across neural measurement modalities**
+<h1 align="center">Neuro Multimodal Alignment</h1>
 
-Python 3.10+ · [MIT License](LICENSE) · Version 0.5.0  
-[Build status](https://github.com/lathushanrk-cmd/neuro-multimodal-alignment/actions) · [Installation](docs/getting_started.md) · [Methods](docs/index.md)
+<p align="center"><strong>Python methods for comparing the structure of paired neural representations.</strong></p>
 
-![Synthetic representations from two modalities and their alignment against a null comparison](assets/hero_synthetic.png)
+<p align="center"><sub>Research software · v0.5.0 · Python 3.10+ · MIT License</sub></p>
 
-*Illustration from a synthetic benchmark, not participant EEG, MEG or fMRI recordings.*
+<p align="center">[Research question](#research-question) · [Methods](#analysis-methods) · [Try an example](#start-with-a-synthetic-experiment) · [Figures](#what-the-simulations-test) · [Limits](#real-data-example-current-status)</p>
+
+---
 
 ## Research question
 
@@ -16,6 +19,10 @@ EEG, MEG and fMRI offer different measurements of brain activity. Even where an 
 This package examines a narrower question: **do two sets of measurements preserve similar relationships among the experimental items they represent?** It provides several ways to measure correspondence between feature matrices, along with checks intended to reduce spurious alignment and overfitting.
 
 The analyses require a defensible relationship between observations in the two datasets. Matching row counts are not enough.
+
+![Synthetic representations from two modalities and their alignment against a null comparison](assets/hero_synthetic.png)
+
+*Illustration from a synthetic benchmark, not participant EEG, MEG or fMRI recordings.*
 
 ## Analysis methods
 
@@ -86,6 +93,15 @@ All four are **synthetic demonstrations**; the results are produced by code, not
 ```bash
 python reproduce/make_figures.py
 ```
+
+
+### Selected synthetic demonstrations
+
+| Controlled shared structure | Temporal correspondence under a specified model |
+| --- | --- |
+| ![Shared structure from a synthetic benchmark](assets/shared_structure.png) | ![Temporal alignment from a synthetic benchmark](assets/temporal_alignment.png) |
+
+*Both figures are generated from synthetic data. They do not show participant recordings or demonstrate biological correspondence across modalities.*
 
 ## Pairing observations is essential
 
