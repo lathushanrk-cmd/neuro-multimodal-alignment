@@ -8,7 +8,13 @@
 
 <p align="center"><sub>Research software · v0.5.0 · Python 3.10+ · MIT License</sub></p>
 
-<p align="center">[Research question](#research-question) · [Methods](#analysis-methods) · [Try an example](#start-with-a-synthetic-experiment) · [Figures](#what-the-simulations-test) · [Limits](#real-data-example-current-status)</p>
+<p align="center">
+  <a href="#research-question">Research question</a> &nbsp;·&nbsp;
+  <a href="#analysis-methods">Methods</a> &nbsp;·&nbsp;
+  <a href="#start-with-a-synthetic-experiment">Try an example</a> &nbsp;·&nbsp;
+  <a href="#what-the-simulations-test">Figures</a> &nbsp;·&nbsp;
+  <a href="#real-data-example-current-status">Limits</a>
+</p>
 
 ---
 
